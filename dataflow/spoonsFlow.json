@@ -21,8 +21,12 @@
 					"name": "putSpoons"
 				}
 			],
-			"transformations": [],
-			"script": "\n\nsource(output(\n\t\tName as string,\n\t\tLocation as string,\n\t\tLatitude as string,\n\t\tLongitude as string,\n\t\tEmpire_State_Burger as string,\n\t\tChicken_Tikka as string,\n\t\tGammon_afternoon_deal as string,\n\t\tChocolate_Brownie as string,\n\t\tDoom_Bar as string,\n\t\tBirra_Moretti as string,\n\t\tPorn_Star_at_2_x_12 as string,\n\t\tPorn_Star_glass as string,\n\t\tMEAL as string,\n\t\tNotes as string,\n\t\tMoretti_as_a_pc_of_a_tikka as string,\n\t\tMoretti_as_pc_of_burger as string,\n\t\tPRICE_BUCKETS as string,\n\t\tFood_cost as string,\n\t\tDrink_cost as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true,\n\tinferDriftedColumnTypes: true) ~> getSpoons\ngetSpoons sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> putSpoons"
+			"transformations": [
+				{
+					"name": "DerivedColumn1"
+				}
+			],
+			"script": "\n\nsource(output(\n\t\tName as string,\n\t\tLocation as string,\n\t\tLatitude as string,\n\t\tLongitude as string,\n\t\tEmpire_State_Burger as string,\n\t\tChicken_Tikka as string,\n\t\tGammon_afternoon_deal as string,\n\t\tChocolate_Brownie as string,\n\t\tDoom_Bar as string,\n\t\tBirra_Moretti as string,\n\t\tPorn_Star_at_2_x_12 as string,\n\t\tPorn_Star_glass as string,\n\t\tMEAL as string,\n\t\tNotes as string,\n\t\tMoretti_as_a_pc_of_a_tikka as string,\n\t\tMoretti_as_pc_of_burger as string,\n\t\tPRICE_BUCKETS as string,\n\t\tFood_cost as string,\n\t\tDrink_cost as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true,\n\tinferDriftedColumnTypes: true) ~> getSpoons\ngetSpoons derive({} = ERROR_FUNCTION(''),\n\t\teach(match(position>0), $$ = replace($$, '£', ''))) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> putSpoons"
 		}
 	}
 }
