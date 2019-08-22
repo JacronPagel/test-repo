@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "spoonsFlow",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "spoonsSQL",
 						"type": "DatasetReference"
 					},
 					"name": "putSpoons"
