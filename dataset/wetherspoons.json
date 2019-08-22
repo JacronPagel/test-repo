@@ -19,6 +19,83 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "Location",
+				"type": "String"
+			},
+			{
+				"name": "Latitude",
+				"type": "String"
+			},
+			{
+				"name": "Longitude",
+				"type": "String"
+			},
+			{
+				"name": "Empire_State_Burger",
+				"type": "String"
+			},
+			{
+				"name": "Chicken_Tikka",
+				"type": "String"
+			},
+			{
+				"name": "Gammon_afternoon_deal",
+				"type": "String"
+			},
+			{
+				"name": "Chocolate_Brownie",
+				"type": "String"
+			},
+			{
+				"name": "Doom_Bar",
+				"type": "String"
+			},
+			{
+				"name": "Birra_Moretti",
+				"type": "String"
+			},
+			{
+				"name": "Porn_Star_at_2_x_12",
+				"type": "String"
+			},
+			{
+				"name": "Porn_Star_glass",
+				"type": "String"
+			},
+			{
+				"name": "MEAL",
+				"type": "String"
+			},
+			{
+				"name": "Notes",
+				"type": "String"
+			},
+			{
+				"name": "Moretti_as_a_pc_of_a_tikka",
+				"type": "String"
+			},
+			{
+				"name": "Moretti_as_pc_of_burger",
+				"type": "String"
+			},
+			{
+				"name": "PRICE_BUCKETS",
+				"type": "String"
+			},
+			{
+				"name": "Food_cost",
+				"type": "String"
+			},
+			{
+				"name": "Drink_cost",
+				"type": "String"
+			}
+		]
 	}
 }
