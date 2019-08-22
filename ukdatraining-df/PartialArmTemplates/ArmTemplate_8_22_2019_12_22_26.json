@@ -1,0 +1,209 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "ukdatraining-df"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/spoonsPipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "runSpoons",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "spoonsFlow",
+								"type": "DataFlowReference"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/spoonsFlow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/wetherspoons')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Wetherspoon.csv",
+						"container": "ukdatraining"
+					},
+					"columnDelimiter": ",",
+					"encodingName": "WINDOWS-1258",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Location",
+						"type": "String"
+					},
+					{
+						"name": "Latitude",
+						"type": "String"
+					},
+					{
+						"name": "Longitude",
+						"type": "String"
+					},
+					{
+						"name": "Empire_State_Burger",
+						"type": "String"
+					},
+					{
+						"name": "Chicken_Tikka",
+						"type": "String"
+					},
+					{
+						"name": "Gammon_afternoon_deal",
+						"type": "String"
+					},
+					{
+						"name": "Chocolate_Brownie",
+						"type": "String"
+					},
+					{
+						"name": "Doom_Bar",
+						"type": "String"
+					},
+					{
+						"name": "Birra_Moretti",
+						"type": "String"
+					},
+					{
+						"name": "Porn_Star_at_2_x_12",
+						"type": "String"
+					},
+					{
+						"name": "Porn_Star_glass",
+						"type": "String"
+					},
+					{
+						"name": "MEAL",
+						"type": "String"
+					},
+					{
+						"name": "Notes",
+						"type": "String"
+					},
+					{
+						"name": "Moretti_as_a_pc_of_a_tikka",
+						"type": "String"
+					},
+					{
+						"name": "Moretti_as_pc_of_burger",
+						"type": "String"
+					},
+					{
+						"name": "PRICE_BUCKETS",
+						"type": "String"
+					},
+					{
+						"name": "Food_cost",
+						"type": "String"
+					},
+					{
+						"name": "Drink_cost",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/spoonsFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "wetherspoons",
+								"type": "DatasetReference"
+							},
+							"name": "getSpoons"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "spoonsSQL",
+								"type": "DatasetReference"
+							},
+							"name": "putSpoons"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "\n\nsource(output(\n\t\tName as string,\n\t\tLocation as string,\n\t\tLatitude as string,\n\t\tLongitude as string,\n\t\tEmpire_State_Burger as string,\n\t\tChicken_Tikka as string,\n\t\tGammon_afternoon_deal as string,\n\t\tChocolate_Brownie as string,\n\t\tDoom_Bar as string,\n\t\tBirra_Moretti as string,\n\t\tPorn_Star_at_2_x_12 as string,\n\t\tPorn_Star_glass as string,\n\t\tMEAL as string,\n\t\tNotes as string,\n\t\tMoretti_as_a_pc_of_a_tikka as string,\n\t\tMoretti_as_pc_of_burger as string,\n\t\tPRICE_BUCKETS as string,\n\t\tFood_cost as string,\n\t\tDrink_cost as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: true,\n\tinferDriftedColumnTypes: true) ~> getSpoons\ngetSpoons derive(each(match(position>0), $$ = replace($$, '£', ''))) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true) ~> putSpoons"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/wetherspoons')]",
+				"[concat(variables('factoryId'), '/datasets/spoonsSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/spoonsSQL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "spoons"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
